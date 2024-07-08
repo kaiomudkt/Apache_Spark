@@ -1,5 +1,3 @@
-- parte 1: https://medium.com/@sanjeets1900/create-spark-single-node-cluster-with-docker-62c54e2409a7
-- parte 2: https://medium.com/@sanjeets1900/spark-single-node-setup-with-docker-and-jupyter-notebook-7ce1f7af4fb2
 
 # Configuração do Spark em um Único Nó no Docker
 
@@ -14,20 +12,11 @@ docker-compose --build
 $ sudo docker-compose up --build
 ```
 
+Para entrar dentro do terminal do container
 ```bash
 $ sudo docker exec -it spark1n /bin/bash
 ```
 
-Para executar em modo detached (desanexado) a partir da janela atual do terminal usando o comando `docker` sem usar `docker-compose`, faça o seguinte:
-```bash
-hostfolder="$(pwd)/app"  # O caminho do Windows está confuso, então imprima e confirme antes de prosseguir
-hostfolder="/C:/Users/Sanjeet/Desktop/git_pod_experient_labs/spark_playground/spark-single-node/app"
-dockerfolder="/home/sam/app"
-docker run --rm -it \
-  -p 4040:4040 -p 4041:4041 \
-  -v ${hostfolder}:${dockerfolder} \
-spark1n:latest
-```
 
 Use a seguinte URL para acessar o Jupyter Notebook: [http://localhost:4041](http://localhost:4041)
 

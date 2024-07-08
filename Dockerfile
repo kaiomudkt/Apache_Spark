@@ -113,6 +113,43 @@ RUN apt-get -y install vim
 RUN cat /etc/sudoers
 RUN echo "$UNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 RUN cat /etc/sudoers
+RUN apt-get update && apt-get install -y wget unzip
+
+###########################################
+# instanlando dependencias
+###########################################
+# Copia os arquivos de requirements.txt para o diretório de trabalho
+COPY requirements.txt .
+# Instala as dependências listadas no requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+###########################################
+# ngrok
+###########################################
+# Instale as dependências necessárias para o wget e o gnupg
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg
+
+# Crie o diretório keyrings
+RUN mkdir -p /etc/apt/keyrings
+
+# Baixe e adicione a chave GPG para o Ngrok
+RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | \
+    gpg --dearmor -o /etc/apt/keyrings/ngrok.gpg
+
+# Instale wget e unzip
+RUN apt-get update && apt-get install -y wget unzip
+
+# Baixe e instale o Ngrok
+RUN wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.zip && \
+    unzip ngrok-v3-stable-linux-amd64.zip && \
+    mv ngrok /usr/local/bin/ && \
+    rm ngrok-v3-stable-linux-amd64.zip
+
+# Ajuste as permissões do diretório do pyngrok antes de instalá-lo
+RUN mkdir -p /usr/local/lib/python3.10/site-packages/pyngrok/bin && \
+    chmod -R 777 /usr/local/lib/python3.10/site-packages/pyngrok
 
 #############################
 # spark history server
@@ -141,6 +178,9 @@ RUN mkdir -p /home/${UNAME}/app \
 
 WORKDIR /home/${UNAME}/app
 
+# Ajuste as permissões para evitar o erro de permissão ao instalar Ngrok
+# RUN mkdir -p /usr/local/lib/python3.8/site-packages/pyngrok/bin && \
+#     chmod -R 777 /usr/local/lib/python3.8/site-packages/pyngrok
 
 #CMD ["sh", "-c", "tail -f /dev/null"]
 #CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=4041", "--no-browser", "--allow-root", "--NotebookApp.token=''" ,"--NotebookApp.password=''" ]

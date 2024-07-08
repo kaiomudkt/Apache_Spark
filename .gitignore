@@ -1,1 +1,3 @@
 app/spark_events/**
+**/.env
+ngrok
